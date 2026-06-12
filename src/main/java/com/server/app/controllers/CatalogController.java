@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/catalog")
+@RequestMapping("/api/catalogos")
 public class CatalogController {
 
     private final CatalogService catalogService;
