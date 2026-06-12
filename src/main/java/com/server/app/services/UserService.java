@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.server.app.config.JsonWebToken;
 
 import com.server.app.dto.user.UserCreateDto;
 import com.server.app.dto.user.UserUpdateDto;
@@ -23,6 +24,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final JsonWebToken jwtUtil;
 
     @Transactional
     public User create(UserCreateDto dto) {
@@ -107,4 +109,80 @@ public class UserService {
             }
         });
     }
+
+    @Transactional
+    public User signUp(UserCreateDto dto){
+        return create(dto);
+    }
+
+    public String login(String email, String password){
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Credenciales incorrectas"));
+
+        if (user.isBlocked()){
+            throw new ConfictException("Tu cuenta está bloqueada");
+        }
+
+        if (!passwordEncoder.matches(password, user.getPassword())){
+            throw new ConfictException("Credenciales incorrectas");
+        }
+
+        return jwtUtil.createToken(user);
+    }
+
+
+    @Transactional
+    public User updateProfile(int userId, String newName, String newEmail, String newSurname, String newUsername){
+        User user = findById(userId);
+
+        if (user.isBlocked()) {
+            throw new ConfictException("El usuario está bloqueada");
+        }
+
+        if (newName != null && !newName.isBlank()) {
+            user.setName(newName);
+        }
+
+        if (newSurname != null && !newSurname.isBlank()) {
+            user.setSurname(newSurname);
+        }
+
+        if (newEmail != null && !newEmail.isBlank()) {
+            uniqueEmail(newEmail, userId);
+            user.setEmail(newEmail);
+        }
+
+
+        if (newUsername != null && !newUsername.isBlank()) {
+            uniqueUsername(newUsername, userId);
+            user.setUsername(newUsername);
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void updatePassword(int userId, String oldPassword, String newPassword, String confirmPassword) {
+        User user = findById(userId);
+
+        if (user.isBlocked()) {
+            throw new ConfictException("El usuario está bloqueado");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new ConfictException("La contraseña actual es incorrecta");
+        }
+
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new ConfictException("La nueva contraseña no puede estar vacía");
+        }
+
+        if (!newPassword.equals(confirmPassword)){
+            throw new ConfictException("Las contraseñas no son iguales");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+
 }
