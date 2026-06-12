@@ -47,7 +47,7 @@ public class UserService {
     public Page<User> findAll(int page, int size, String search) {
         return userRepository.findAll(PageRequest.of(page, size), search);
     }
-    
+
     public User findById(int userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
