@@ -11,8 +11,12 @@ public class SecurityRules {
     );
 
     public static final Map<String, Set<String>> AUTH_ONLY = Map.of(
-            "GET", Set.of("/api/auth/profile"),
-            "POST", Set.of("/api/auth/logout")
+            "GET", Set.of("/api/auth/profile", "/api/catalogos"),
+            "POST", Set.of("/api/auth/logout", "/api/catalogos"),
+            "PUT", Set.of("/api/catalogos/{id}"),
+            "DELETE", Set.of("/api/catalogos/{id}")
+
+
     );
 
     public static final Set<String> IGNORED = Set.of("/error");

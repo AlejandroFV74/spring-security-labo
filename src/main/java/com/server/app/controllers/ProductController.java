@@ -50,7 +50,7 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.ok(Map.of("message", "Producto eliminado exitosamente"));
     }
-    
+
     @GetMapping
     public ResponseEntity<Page<Product>> getAll(
             @RequestParam(defaultValue = "0") int page,
