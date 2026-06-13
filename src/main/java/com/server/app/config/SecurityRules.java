@@ -15,10 +15,10 @@ public class SecurityRules {
     );
 
     public static final Map<String, Set<String>> AUTH_ONLY = Map.of(
-            "GET", Set.of("/api/auth/profile", "/api/catalogos", "/api/categorias"),
-            "POST", Set.of("/api/auth/logout", "/api/catalogos", "/api/categorias"),
-            "PUT", Set.of("/api/catalogos/{id}", "/api/categorias/{id}"),
-            "DELETE", Set.of("/api/catalogos/{id}", "/api/categorias/{id}")
+            "GET", Set.of("/api/auth/profile", "/api/catalogos", "/api/categorias", "/api/productos"),
+            "POST", Set.of("/api/auth/logout", "/api/catalogos", "/api/categorias", "/api/productos"),
+            "PUT", Set.of("/api/catalogos/{id}", "/api/categorias/{id}",  "/api/productos/{id}"),
+            "DELETE", Set.of("/api/catalogos/{id}", "/api/categorias/{id}", "/api/productos/{id}")
 
 
     );
